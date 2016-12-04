@@ -1,8 +1,6 @@
 """
 Fun facts about the 2016 St. Jude Memphis Marathon finishers:
-
 See: http://www.besttimescct.com/results/marathon-results-by-place-2016.HTML
-
 
 """
 import locale
@@ -10,12 +8,13 @@ from statistics import mean, median, mode
 from collections import namedtuple, Counter
 from html.parser import HTMLParser
 
-
+# Read in the downloaded HTML finishers file. Get this from:
+# http://www.besttimescct.com/results/marathon-results-by-place-2016.HTML
 RESULTS_FILE = "marathon-results-by-place-2016.HTML"
 
 
 class TDParser(HTMLParser):
-    """Keep all the text from <td> elements."""
+    """This is a simple HTML parser that keeps all the text from <td> elements."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,11 +34,6 @@ class TDParser(HTMLParser):
         else:
             self.valid_cell = False
 
-        # elif tag == "td" and self.in_row:
-            # print("Encountered a start tag:", tag)
-            # Columns in the HTML doc:
-            # Place	Name, Age, Sex/plc, Sex, Time, Pace, City, State, Bib No
-
     def handle_endtag(self, tag):
         if tag == "tr" and len(self.row_values) > 0:
             # We're done processing a row, turn it into a namedtuple and
@@ -52,23 +46,23 @@ class TDParser(HTMLParser):
             Runner = namedtuple("Runner", props)
             self.results.append(Runner(*self.row_values))
 
-            self.in_row = False
-            self.row_values = []
+            self.in_row = False  # we're done processing a row.
+            self.row_values = []  # reset for the next row.
 
     def handle_data(self, data):
+        # Saves the data from each <td> cell.
         data = data.strip()
         if data and self.valid_cell:
             self.row_values.append(data)
 
 
-
 if __name__ == "__main__":
-    locale.setlocale(locale.LC_ALL, '')
+    locale.setlocale(locale.LC_ALL, '')  # Use locale to pretty-print the combined distance run.
 
-    # print out some details about this thing.
+    # parse our data...
     parser = TDParser()
     parser.feed(open(RESULTS_FILE).read())
-    runners = parser.results
+    runners = parser.results  # Save the results in a friendly name.
 
     print("\n\n{} Marathon Runners".format(len(runners)))
     print("From {} different states".format(len(set(runner.state for runner in runners))))
