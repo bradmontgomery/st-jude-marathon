@@ -7,6 +7,33 @@ from collections import namedtuple
 from html.parser import HTMLParser
 
 
+# Map a year to the file containing its data.
+RESULTS_FILES = {
+    2002: 'data/stjude-marathon-agegroup-2002.txt',
+    2003: 'data/stjude-marathon-top-2003.txt',
+    2004: 'data/marathon-results-by-place-2004.txt',
+    2005: 'data/marathon-results-by-place-2005.txt',
+    2006: 'data/marathon-results-by-place-2006.txt',
+    2007: 'data/marathon-results-by-place-2007.txt',
+    2008: 'data/marathon-results-by-place-2008.txt',
+    2009: 'data/marathon-results-by-place-2009.txt',
+    2010: 'data/marathon-by-place-2010.txt',
+    2011: 'data/marathon-results-by-place-2011.txt',
+    2012: 'data/marathon-results-by-place-2012.txt',
+    2014: 'data/marathon-results-by-place-2014.txt',
+    2015: 'data/marathon-results-by-place-2015.HTML',
+    2016: 'data/marathon-results-by-place-2016.HTML',
+}
+
+
+def parse(year):
+    """Parse the correct file for a given year."""
+    if year in RESULTS_FILES and year in PARSERS and PARSERS[year]:
+        parser = PARSERS[year]
+        return parser(open(RESULTS_FILES[year]).read())
+    return None
+
+
 class TDParser(HTMLParser):
     """This is a simple HTML parser that keeps all the text from <td> elements.
 
@@ -83,3 +110,22 @@ def parse_2015(content):
     parser = TDParser(columns=cols)
     parser.feed(content)
     return parser.results
+
+
+# Map a year to a parser.
+PARSERS = {
+    2002: None,
+    2003: None,
+    2004: None,
+    2005: None,
+    2006: None,
+    2007: None,
+    2008: None,
+    2009: None,
+    2010: None,
+    2011: None,
+    2012: None,
+    2014: None,
+    2015: parse_2015,
+    2016: parse_2016,
+}
