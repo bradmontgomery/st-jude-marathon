@@ -1,16 +1,34 @@
 """
-Fun facts about the 2016 St. Jude Memphis Marathon finishers:
-See: http://www.besttimescct.com/results/marathon-results-by-place-2016.HTML
+Fun facts about the St. Jude Memphis Marathons.
+
+Data retrieved from:
+https://www.stjude.org/get-involved/at-play/fitness-for-st-jude/memphis-marathon/participants/results.html
 
 """
 import locale
+import sys
+
 from statistics import mean, median, mode
 from collections import namedtuple, Counter
 from html.parser import HTMLParser
 
-# Read in the downloaded HTML finishers file. Get this from:
-# http://www.besttimescct.com/results/marathon-results-by-place-2016.HTML
-RESULTS_FILE = "marathon-results-by-place-2016.HTML"
+
+RESULTS_FILES = {
+    2002: 'data/stjude-marathon-agegroup-2002.txt',
+    2003: 'data/stjude-marathon-top-2003.txt',
+    2004: 'data/marathon-results-by-place-2004.txt',
+    2005: 'data/marathon-results-by-place-2005.txt',
+    2006: 'data/marathon-results-by-place-2006.txt',
+    2007: 'data/marathon-results-by-place-2007.txt',
+    2008: 'data/marathon-results-by-place-2008.txt',
+    2009: 'data/marathon-results-by-place-2009.txt',
+    2010: 'data/marathon-by-place-2010.txt',
+    2011: 'data/marathon-results-by-place-2011.txt',
+    2012: 'data/marathon-results-by-place-2012.txt',
+    2014: 'data/marathon-results-by-place-2014.txt',
+    2015: 'data/marathon-results-by-place-2015.HTML',
+    2016: 'data/marathon-results-by-place-2016.HTML',
+}
 
 
 class TDParser(HTMLParser):
@@ -56,12 +74,17 @@ class TDParser(HTMLParser):
             self.row_values.append(data)
 
 
-if __name__ == "__main__":
+def print_data(year):
     locale.setlocale(locale.LC_ALL, '')  # Use locale to pretty-print the combined distance run.
 
     # parse our data...
     parser = TDParser()
-    parser.feed(open(RESULTS_FILE).read())
+    try:
+        parser.feed(open(RESULTS_FILES[year]).read())
+    except FileNotFoundError:
+        print("No data for {}.".format(year))
+        return
+
     runners = parser.results  # Save the results in a friendly name.
 
     print("\n\n{} Marathon Runners".format(len(runners)))
@@ -119,3 +142,10 @@ if __name__ == "__main__":
     median_time = "{}:{}:{}".format(hours, minutes, seconds)
 
     print("Average Finish Time: {} mean / {} median.".format(mean_time, median_time))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        print_data(year=int(sys.argv[1]))
+    else:
+        print("Usage: python marathon_details.py <year>")
