@@ -3,6 +3,7 @@
 This module parses the data files from each year.
 
 """
+from pandas import read_fwf
 from collections import namedtuple
 from html.parser import HTMLParser
 
@@ -30,7 +31,7 @@ def parse(year):
     """Parse the correct file for a given year."""
     if year in RESULTS_FILES and year in PARSERS and PARSERS[year]:
         parser = PARSERS[year]
-        return parser(open(RESULTS_FILES[year]).read())
+        return parser(year, RESULTS_FILES[year])
     return None
 
 
@@ -87,29 +88,33 @@ class TDParser(HTMLParser):
             self.row_values.append(data)
 
 
-def parse_2016(content):
+def parse_2016(year, file):
     """Given a a string of content, parse it & return a list of namedtuples"""
-    # Place, Name, Age, Sex/plc, Sex, Time, Pace, City, State, Bib No
-    cols = [
-        'place', 'first_name', 'last_name', 'age', 'sexpl', 'sex',
-        'time', 'pace', 'city', 'state', 'bib'
-    ]
-    parser = TDParser(columns=cols)
-    parser.feed(content)
-    return parser.results
+    with open(file) as file:
+        content = file.read()
+        # Place, Name, Age, Sex/plc, Sex, Time, Pace, City, State, Bib No
+        cols = [
+            'place', 'first_name', 'last_name', 'age', 'sexpl', 'sex',
+            'time', 'pace', 'city', 'state', 'bib'
+        ]
+        parser = TDParser(columns=cols)
+        parser.feed(content)
+        return parser.results
 
 
-def parse_2015(content):
+def parse_2015(year, file):
     """Given a a string of content, parse it & return a list of namedtuples"""
-    # Place, Name, Age, Sex/plc, Sex, Time, Pace, City, State, Bib No,
-    # Clock Time, Link (NOTE: not sure why omitting the link works, but it does)
-    cols = [
-        'place', 'first_name', 'last_name', 'age', 'sexpl', 'sex',
-        'time', 'pace', 'city', 'state', 'bib', 'clocktime',
-    ]
-    parser = TDParser(columns=cols)
-    parser.feed(content)
-    return parser.results
+    with open(file) as file:
+        content = file.read()
+        # Place, Name, Age, Sex/plc, Sex, Time, Pace, City, State, Bib No,
+        # Clock Time, Link (NOTE: not sure why omitting the link works, but it does)
+        cols = [
+            'place', 'first_name', 'last_name', 'age', 'sexpl', 'sex',
+            'time', 'pace', 'city', 'state', 'bib', 'clocktime',
+        ]
+        parser = TDParser(columns=cols)
+        parser.feed(content)
+        return parser.results
 
 
 def text_parser(content, columns):
@@ -125,15 +130,20 @@ def text_parser(content, columns):
     return results
 
 
-def parse_2014(content):
-    # columns:
-    # Place, First Name, Last Name, Age, Sex/plc, Sex, Time, Pace,
-    # City, St, Bib No
+def parse_11_col_text(year, file):
+    results = []
+    # File had been modified to have a header (with ==='s underneath), so treat
+    # the first two lines as headers.
     cols = [
         'place', 'first_name', 'last_name', 'age', 'sexpl', 'sex',
         'time', 'pace', 'city', 'state', 'bib',
     ]
-    return text_parser(content, cols)
+    data = read_fwf(file, header=[0, 1])
+    for index, row in data.iterrows():
+        Runner = namedtuple("Runner", cols)
+        results.append(Runner(*row))
+    return results
+
 
 # Map a year to a parser.
 PARSERS = {
@@ -144,11 +154,11 @@ PARSERS = {
     2006: None,
     2007: None,
     2008: None,
-    2009: None,
-    2010: None,
-    2011: None,
-    2012: None,
-    2014: parse_2014,
-    2015: parse_2015,
-    2016: parse_2016,
+    2009: parse_11_col_text,
+    2010: parse_11_col_text,
+    2011: parse_11_col_text,
+    2012: parse_11_col_text,
+    2014: parse_11_col_text,
+    2015: parse_11_col_text,
+    2016: parse_11_col_text,
 }
