@@ -8,7 +8,7 @@ https://www.stjude.org/get-involved/at-play/fitness-for-st-jude/memphis-marathon
 import locale
 import sys
 
-from statistics import mean, median, mode
+from statistics import mean, median, mode, StatisticsError
 from collections import Counter
 
 import parsers
@@ -32,8 +32,13 @@ def print_data(year):
 
         # Average age.
         ages = [int(runner.age) for runner in runners]
+        try:
+            mode_age = mode(ages)
+        except StatisticsError:
+            mode_age = 'No unique'
+
         print("Average age: {} mean / {} median / {} mode".format(
-            int(mean(ages)), int(median(ages)), mode(ages)))
+            int(mean(ages)), int(median(ages)), mode_age))
 
         # Count Female / Male participants.
         females = len([runner.sex for runner in runners if runner.sex == "F"])
@@ -50,13 +55,18 @@ def print_data(year):
         mean_pace_minutes, mean_pace_seconds = divmod(mean_pace, 60)
         median_pace = int(median(paces))
         median_pace_minutes, median_pace_seconds = divmod(median_pace, 60)
-        mode_pace = mode(paces)
-        mode_pace_minutes, mode_pace_seconds = divmod(mode_pace, 60)
 
-        print("Average Pace: {}:{} mean / {}:{} median / {}:{} mode".format(
+        try:
+            mode_pace = mode(paces)
+            mode_pace_minutes, mode_pace_seconds = divmod(mode_pace, 60)
+            mode_pace = "{}:{}".format(mode_pace_minutes, mode_pace_seconds)
+        except StatisticsError:
+            mode_pace = 'No unique'
+
+        print("Average Pace: {}:{} mean / {}:{} median / {} mode".format(
             mean_pace_minutes, mean_pace_seconds,
             median_pace_minutes, median_pace_seconds,
-            mode_pace_minutes, mode_pace_seconds
+            mode_pace
         ))
 
         # Average finish times.
@@ -75,8 +85,15 @@ def print_data(year):
         hours, minutes = divmod(minutes, 60)
         median_time = "{}:{}:{}".format(hours, minutes, seconds)
 
-        print("Average Finish Time: {} mean / {} median.".format(mean_time, median_time))
-
+        try:
+            mode_time = mode(times)
+            minutes, seconds = divmod(mode_time, 60)
+            hours, minutes = divmod(minutes, 60)
+            mode_time = "{}:{}:{}".format(hours, minutes, seconds)
+        except StatisticsError:
+            mode_time = 'No unique'
+        print("Average Finish Time: {} mean / {} median / {} mode.".format(
+            mean_time, median_time, mode_time))
     else:
         print("Sorry, either no data or parser for {}.".format(year))
 
