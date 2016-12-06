@@ -112,6 +112,29 @@ def parse_2015(content):
     return parser.results
 
 
+def text_parser(content, columns):
+    expected_items = len(columns)
+    results = []
+    for row in content.split("\n"):
+        items = row.split()
+        if len(items) == expected_items and not (
+            items[0].startswith('=') or items[0].startswith('Place')
+        ):
+            Runner = namedtuple("Runner", columns)
+            results.append(Runner(*items))
+    return results
+
+
+def parse_2014(content):
+    # columns:
+    # Place, First Name, Last Name, Age, Sex/plc, Sex, Time, Pace,
+    # City, St, Bib No
+    cols = [
+        'place', 'first_name', 'last_name', 'age', 'sexpl', 'sex',
+        'time', 'pace', 'city', 'state', 'bib',
+    ]
+    return text_parser(content, cols)
+
 # Map a year to a parser.
 PARSERS = {
     2002: None,
@@ -125,7 +148,7 @@ PARSERS = {
     2010: None,
     2011: None,
     2012: None,
-    2014: None,
+    2014: parse_2014,
     2015: parse_2015,
     2016: parse_2016,
 }
