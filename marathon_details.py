@@ -31,7 +31,7 @@ def print_data(year):
             print("- {} ({})".format(city, count))
 
         # Average age.
-        ages = [int(runner.age) for runner in runners]
+        ages = [int(runner.age) for runner in runners if runner.age.is_integer()]
         try:
             mode_age = mode(ages)
         except StatisticsError:
