@@ -189,6 +189,6 @@ PARSERS = {
     2011: parse_11_col_text,
     2012: parse_11_col_text,
     2014: parse_11_col_text,
-    2015: parse_11_col_text,
-    2016: parse_11_col_text,
+    2015: parse_2015,
+    2016: parse_2016,
 }
