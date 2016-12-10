@@ -22,6 +22,11 @@ Run `python marathon_details.py <year>`, e.g.
 each year.
 
 
+## What about some Charts?
+
+I generated a CSV and plotted some stuff in a [Google sheet, here](https://docs.google.com/spreadsheets/d/15nSFo_WKVWTufqSwoTxWbe2013KVXTqk7gE2Pj-JEbg/edit?usp=sharing).
+
+
 ## License
 
 This python code in this repo is available under the terms of the MIT license
