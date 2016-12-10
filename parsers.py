@@ -145,15 +145,45 @@ def parse_11_col_text(year, file):
     return results
 
 
+def parse_8_col_text(year, file):
+    results = []
+    # File had been modified to have a header (with ==='s underneath), so treat
+    # the first two lines as headers.
+    cols = [
+        'place', 'first_name', 'last_name', 'age', 'sexpl', 'sex',
+        'time', 'pace', 'city', 'state'
+    ]
+    data = read_fwf(file, header=[0, 1])
+    for index, row in data.iterrows():
+        # The text file's fields only include:
+        #   Place, Name, Age, Sex/plc, Sex, Time, Pace, City-St
+        # NOTE: (first/last) is all in one column, as is city & state.
+        record = [
+            row[0],  # place
+            ' '.join(row[1].split()[:-1]),  # first_name
+            row[1].split()[-1],  # last_name
+            row[2],  # age
+            row[3],  # sexpl
+            row[4],  # sex
+            row[5],  # time
+            row[6],  # pace
+            ' '.join(row[7].split()[:-1]),  # City
+            row[7].split()[-1]  # State
+        ]
+        Runner = namedtuple("Runner", cols)
+        results.append(Runner(*record))
+    return results
+
+
 # Map a year to a parser.
 PARSERS = {
     2002: None,
-    2003: None,
-    2004: None,
-    2005: None,
-    2006: None,
-    2007: None,
-    2008: None,
+    2003: parse_8_col_text,
+    2004: parse_8_col_text,
+    2005: parse_8_col_text,
+    2006: parse_8_col_text,
+    2007: parse_8_col_text,
+    2008: parse_8_col_text,
     2009: parse_11_col_text,
     2010: parse_11_col_text,
     2011: parse_11_col_text,
