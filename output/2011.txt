@@ -1,0 +1,19 @@
+2364 Marathon Runners
+From 45 different states
+Total distance combined ==> 61,936+ miles
+Mostly from (top-10 cities):
+- Memphis (340)
+- Collierville (91)
+- Germantown (82)
+- Cordova (73)
+- Little Rock (42)
+- Bartlett (41)
+- Shreveport (34)
+- Jackson (33)
+- Arlington (28)
+- St. Louis (26)
+Average age: 38 mean / 37 median / 35 mode
+Females: 1079!
+Males: 1285!
+Average Pace: 10:40 mean / 10:35 median / 11:13 mode
+Average Finish Time: 4:39:29 mean / 4:37:16 median / No unique mode.
