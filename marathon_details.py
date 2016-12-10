@@ -14,6 +14,15 @@ from collections import Counter
 import parsers
 
 
+def is_numeric(value):
+    """given some value, test if it's numeric & can safely be converted to an int"""
+    return any([
+        type(value) is str and value.isnumeric(),
+        hasattr(value, 'is_integer') and value.is_integer(),
+        type(value) is int,
+    ])
+
+
 def print_data(year):
     locale.setlocale(locale.LC_ALL, '')  # Use locale to pretty-print the combined distance run.
 
@@ -31,7 +40,7 @@ def print_data(year):
             print("- {} ({})".format(city, count))
 
         # Average age.
-        ages = [int(runner.age) for runner in runners if runner.age.is_integer()]
+        ages = [int(runner.age) for runner in runners if is_numeric(runner.age)]
         try:
             mode_age = mode(ages)
         except StatisticsError:
