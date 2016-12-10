@@ -118,6 +118,7 @@ def export_data():
 
     """
     # What we'll keep:
+    # - year
     # - total_runners
     # - num males
     # - num females
@@ -127,8 +128,8 @@ def export_data():
     # - average pace (mean)
     # - average finish time (mean)
     headers = [
-        'Total Runners', 'Males', 'Females', 'States', 'Combined Distance',
-        'Mean Age', 'Mean Pace', 'Mean Finish Time',
+        'Year', 'Total Runners', 'Males', 'Females', 'States',
+        'Combined Distance', 'Mean Age', 'Mean Pace', 'Mean Finish Time',
     ]
     data = tablib.Dataset(headers=headers)
 
@@ -141,7 +142,7 @@ def export_data():
         runners = parsers.parse(year)
         row = []
         if runners:
-
+            row.append(year)  # Year
             row.append(len(runners))  # Total Runners
             row.append(len([runner.sex for runner in runners if runner.sex == "F"]))
             row.append(len([runner.sex for runner in runners if runner.sex == "M"]))
